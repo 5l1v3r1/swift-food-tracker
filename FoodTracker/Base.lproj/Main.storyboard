@@ -57,7 +57,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Your Meals" id="SPi-zz-JGU">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="SaZ-hK-AJ7"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="SaZ-hK-AJ7">
+                            <connections>
+                                <segue destination="BYZ-38-t0r" kind="show" id="qVT-Im-Z3y"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EG7-AE-bsi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -77,7 +81,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="BSa-ce-bWO">
-                                <rect key="frame" x="16" y="40" width="343" height="410"/>
+                                <rect key="frame" x="16" y="84" width="343" height="410"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter meal name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="i1i-22-b8z">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
