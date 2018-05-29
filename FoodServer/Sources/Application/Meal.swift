@@ -2,70 +2,62 @@
 //  Meal.swift
 //  FoodTracker
 //
-//  Created by Alexander Ogilvie on 28/05/2018.
-//  Copyright © 2018 Alexander Ogilvie. All rights reserved.
+//  Created by Jane Appleseed on 11/10/16.
+//  Copyright © 2016 Apple Inc. All rights reserved.
 //
 
-import UIKit
-import os.log
+import Foundation
 
-class Meal: NSObject, NSCoding {
+struct Meal: Codable {
+
     //MARK: Properties
+
     var name: String
-    var photo: UIImage?
+    var photo: Data
     var rating: Int
-    
-    //MARK: Archiving Paths
-    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-    static let ArchiveURL = DocumentsDirectory.appendingPathComponent("meals")
-    
-    //MARK: Types
-    
-    struct PropertyKey {
-        static let name = "name"
-        static let photo = "photo"
-        static let rating = "rating"
-    }
-    
-    //MARK: Initialisation
-    init?(name: String, photo: UIImage?, rating: Int) {
-        
-        // Name must not be empty
+
+    //MARK: Initialization
+
+    init?(name: String, photo: Data, rating: Int) {
+
+        // The name must not be empty
         guard !name.isEmpty else {
             return nil
         }
-        
-        // The rating must be between 0 and 5 inclusive
+
+        // The rating must be between 0 and 5 inclusively
         guard (rating >= 0) && (rating <= 5) else {
             return nil
         }
-        
-        // Initialise stored properties.
+
+        // Initialization should fail if there is no name or if the rating is negative.
+        if name.isEmpty || rating < 0  {
+            return nil
+        }
+
+        // Initialize stored properties.
         self.name = name
         self.photo = photo
         self.rating = rating
+
     }
-    
-    //MARK: NSCoding
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(name, forKey: PropertyKey.name)
-        aCoder.encode(photo, forKey: PropertyKey.photo)
-        aCoder.encode(rating, forKey: PropertyKey.rating)
-    }
-    
-    required convenience init?(coder aDecoder: NSCoder) {
-        // The name is required. If we cannot decode a name string, the initialiser should fail.
-        guard let name = aDecoder.decodeObject(forKey: PropertyKey.name) as? String else {
-            os_log("Unable to decode the name for a Meal object.", log: OSLog.default, type: .debug)
-            return nil
+}
+
+struct Summary: Codable {
+    var summary: [NoPhotoMeal]
+    struct NoPhotoMeal: Codable {
+        var name: String
+        var rating: Int
+        init(_ meal: Meal) {
+            self.name = meal.name
+            self.rating = meal.rating
         }
-        
-        // Because photo is an optional property of Meal, just use conditional cast.
-        let photo = aDecoder.decodeObject(forKey: PropertyKey.photo) as? UIImage
-        
-        let rating = aDecoder.decodeInteger(forKey: PropertyKey.rating)
-        
-        // Must call designated initialiser
-        self.init(name: name, photo: photo, rating: rating)
+    }
+    
+    init(_ meals: [String: Meal]) {
+        summary = meals.map({ NoPhotoMeal($0.value) })
+    }
+    init(_ meals: [Meal]) {
+        summary = meals.map({ NoPhotoMeal($0) })
     }
 }
