@@ -128,6 +128,10 @@ import UIKit
             default:
                 valueString = "\(rating) start set."
             }
+            
+            // Assign the hint string and value string
+            button.accessibilityHint = hintString
+            button.accessibilityValue = valueString
         }
     }
 }
