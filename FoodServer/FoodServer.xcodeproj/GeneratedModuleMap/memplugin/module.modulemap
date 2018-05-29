@@ -1,0 +1,4 @@
+module memplugin {
+    umbrella "/Users/Swotboy2000/cchrysalis/week8/FoodTracker/FoodServer/.build/checkouts/omr-agentcore-1826539389957424207/src/memplugin/include"
+    export *
+}
