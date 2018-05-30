@@ -66,6 +66,36 @@ public class App {
                 next()
             }
         }
+        // Add BodyParser middleware for form inputs
+        router.post("/foodtracker", middleware: BodyParser())
+        router.post("/foodtracker") { request, response, next in
+            // Reload the page to prevent multiple submissions
+            try response.redirect("/foodtracker")
+            // Parse request with BodyParser
+            guard let parsedBody = request.body else {
+                next()
+                return
+            }
+            // Split parsedBody into MultiPart array
+            let parts = parsedBody.asMultiPart
+            // Save the multipart array as a Meal object
+            guard let name = parts?[0].body.asText,
+                let stringRating = parts?[1].body.asText,
+                let rating = Int(stringRating),
+                case .raw(let photo)? = parts?[2].body,
+                parts?[2].type == "image/jpeg",
+                let newMeal = Meal(name: name, photo: photo, rating: rating)
+            else {
+                next()
+                return
+            }
+            // Save the Meal and the photo
+            let path = "\(self.rootPath)/\(newMeal.name).jpg"
+            self.fileManager.createFile(atPath: path, contents: newMeal.photo)
+            newMeal.save { (meal: Meal?, error: RequestError?) in
+                next()
+            }
+        }
         
         Persistence.setUp()
         do {
