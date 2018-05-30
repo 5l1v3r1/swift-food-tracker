@@ -172,7 +172,7 @@ class MealTableViewController: UITableViewController {
         for meal in meals {
             saveToServer(meal: meal)
         }
-        loadFromServer()
+        return loadFromServer()
     }
     
     private func loadMeals() -> [Meal]? {
