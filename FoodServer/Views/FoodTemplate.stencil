@@ -1,0 +1,6 @@
+<html>
+There are {{ meals.count }} meals. <br />
+{% for meal in meals %}
+    - {{ meal.name }} with rating {{ meal.rating }} <br />
+{% endfor %}
+</html>

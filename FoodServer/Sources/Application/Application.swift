@@ -7,6 +7,7 @@ import KituraContracts
 import Health
 import SwiftKueryORM
 import SwiftKueryPostgreSQL
+import KituraStencil
 
 public let projectPath = ConfigurationManager.BasePath.project.path
 public let health = Health()
@@ -43,6 +44,28 @@ public class App {
         router.get("/meals", handler: loadHandler)
         router.get("/summary", handler: summaryHandler)
         router.delete("/meal", handler: deleteHandler)
+        
+        router.add(templateEngine: StencilTemplateEngine())
+        router.get("/foodtracker") { request, response, next in
+            // Build a JSON string description of FoodTracker store
+            Meal.findAll { (result: [Meal]?, error: RequestError?) in
+                guard let meals = result else {
+                    return
+                }
+                var allMeals: [String: [[String:Any]]] = ["meals" :[]]
+                for meal in meals {
+                    allMeals["meals"]?.append(["name": meal.name, "rating": meal.rating])
+                }
+                // Render stencil template and add to response
+                do {
+                    try response.render("FoodTemplate.stencil", context: allMeals)
+                } catch let error {
+                    response.send(json: ["Error": error.localizedDescription])
+                }
+                
+                next()
+            }
+        }
         
         Persistence.setUp()
         do {
