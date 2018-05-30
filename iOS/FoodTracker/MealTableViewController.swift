@@ -71,7 +71,8 @@ class MealTableViewController: UITableViewController {
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            // Delete the row from the remote data source and the local view
+            deleteFromServer(meal: meals[indexPath.row])
             meals.remove(at: indexPath.row)
             saveMeals()
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -234,6 +235,20 @@ class MealTableViewController: UITableViewController {
             DispatchQueue.main.async { [unowned self] in
                 self.tableView.reloadData()
             }
+        }
+    }
+    
+    private func deleteFromServer(meal: Meal) {
+        guard let client = KituraKit(baseURL: "http://localhost:8080") else {
+            print("Error creating KituraKit client")
+            return
+        }
+        client.delete("/meal", identifier: meal.name) { (error: Error?) in
+            guard error == nil else {
+                print("Error deleting meal from Kitura: \(error!)")
+                return
+            }
+            print("Deleting meal from Kitura succeeded")
         }
     }
 }
