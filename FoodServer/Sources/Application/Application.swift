@@ -38,6 +38,7 @@ public class App {
         router.post("/meals", handler: storeHandler)
         router.get("/meals", handler: loadHandler)
         router.get("/summary", handler: summaryHandler)
+        router.delete("/meal", handler: deleteHandler)
         
         Persistence.setUp()
         do {
@@ -63,6 +64,10 @@ public class App {
             }
         completion(Summary(meals), nil)
         }
+    }
+    
+    func deleteHandler(id: String, completion: @escaping (RequestError?) -> Void) {
+        Meal.delete(id: id, completion)
     }
 
     public func run() throws {
