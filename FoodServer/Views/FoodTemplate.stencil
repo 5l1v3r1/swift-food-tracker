@@ -1,13 +1,127 @@
+<!DOCTYPE html>
 <html>
-There are {{ meals.count }} meals. <br />
+<title>Food Tracker Frontend</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+<style>
+
+body,h1,h2,h3,h4,h5,h6 {font-family: "Helvetica", sans-serif}
+.w3-bar-block .w3-bar-item {padding:20px}
+.wrapper {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+grid-gap: 10px;
+}
+
+.navbar {
+overflow: hidden;
+background-color: #333;
+position: fixed;
+top: 0;
+width: 100%;
+}
+
+.navbar a {
+float: left;
+display: block;
+color: #f2f2f2;
+text-align: center;
+padding: 15px 15px;
+text-decoration: none;
+font-size: 19px;
+}
+
+.navbar a:hover {
+background: #ddd;
+color: black;
+}
+
+</style>
+<body>
+
+<!-- Top menu -->
+<div class="navbar">
+<a href="#welcome">Welcome</a>
+<a href="#food">Meals</a>
+<a href="#submitmeal">Submit Meal</a>
+<a href="#links">Links</a>
+</div>
+
+<hr id="Welcome">
+
+<!-- About Section -->
+<div class="w3-container w3-padding-32 w3-center">
+<h1>Food Tracker</h1><br>
+<div class="w3-padding-10">
+<h4><b>Polyglottal Project</b></h4>
+<p>This page is generated using Stencil template engine. It is connected to a Kitura server, which is connected to an iOS app, all written entirely is Swift (with a lot of help)!</p>
+</div>
+</div>
+<hr>
+
+<!-- !PAGE CONTENT! -->
+<hr id="food">
+<div class="w3-container w3-padding-32 w3-center" style="max-width:1200px">
+<h1>Meals</h1><br>
+<!-- First Photo Grid-->
+<div class="wrapper">
 {% for meal in meals %}
-    - {{ meal.name }} with rating {{ meal.rating }} <br />
-    <img src="images/{{ meal.name }}.jpg" alt="Image of {{ meal.name }}" height="100"> <br />
+<div class="w3-center">
+<img src="images/{{ meal.name }}.jpg" alt="{{ meal.name }}" height="200">
+<h4> {{ meal.name }} </h4>
+<h5>Rating {{ meal.rating }}/5</h5>
+</div>
 {% endfor %}
-<form action="foodtracker" method="post" enctype"multipart/form-data">
-    Name: <input type"text" name="name"><br>
-    Rating: <input type="range" name="rating" min="0" max="5"><br>
-    File: <input type="file" name="photo"><br>
-    <input type="submit" value="Submit">
+</div>
+<hr>
+
+<hr id="submitmeal">
+
+<div class="w3-container w3-padding-32 w3-center">
+<h1>Add your own meal</h1><br>
+<form action="foodtracker" method="post" enctype="multipart/form-data">
+Name: <input type="text" name="name"><br> <br>
+Rating: <input type="range" name="rating" min="0" max="5"><br> <br>
+File: <input type="file" name="photo"><br> <br>
+<input type="submit" value="Submit">
 </form>
+</div>
+<hr>
+
+<hr id="links">
+<!-- Footer -->
+<footer class="w3-row-padding w3-padding-32">
+<div class="w3-third">
+<h3>GITHUB</h3>
+<p>Check out my work on GitHub! </p>
+<p> <a href="https://github.com/a-ogilvie" target="_blank">Github</a></p>
+</div>
+
+<div class="w3-third">
+<h3>CODE CHRYSALIS</h3>
+<p>I built this during my time as a student of Code Chrysalis! Check them out.</p>
+<ul class="w3-ul w3-hoverable">
+<li class="w3-padding-16">
+<span><a href="https://www.codechrysalis.io/" target="_blank">Code Chrysalis</a></span>
+</li>
+</ul>
+</div>
+
+<div class="w3-third">
+<h3>KITURA</h3>
+<p>This was built using Kitura, by IBM. Check them out here!</p>
+<ul class="w3-ul w3-hoverable">
+<li class="w3-padding-16">
+<span><a href="https://github.com/IBM-Swift/Kitura" target="_blank">Github Link</a></span>
+</li>
+</ul>
+</div>
+</footer>
+<hr>
+<!-- End page content -->
+</div>
+
+</body>
 </html>
