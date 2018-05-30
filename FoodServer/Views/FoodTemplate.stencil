@@ -2,5 +2,6 @@
 There are {{ meals.count }} meals. <br />
 {% for meal in meals %}
     - {{ meal.name }} with rating {{ meal.rating }} <br />
+    <img src="images/{{ meal.name }}.jpg" alt="Image of {{ meal.name }}" height="100"> <br />
 {% endfor %}
 </html>
