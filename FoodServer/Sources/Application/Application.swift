@@ -25,6 +25,9 @@ class Persistence {
 public class App {
     let router = Router()
     let cloudEnv = CloudEnv()
+    
+    private var fileManager = FileManager.default
+    private var rootPath = StaticFileServer().absoluteRootPath
 
     public init() throws {
         // Run the metrics initializer
@@ -35,6 +38,7 @@ public class App {
         // Endpoints
         initializeHealthRoutes(app: self)
         
+        router.get("/images", middleware: StaticFileServer())
         router.post("/meals", handler: storeHandler)
         router.get("/meals", handler: loadHandler)
         router.get("/summary", handler: summaryHandler)
@@ -50,6 +54,9 @@ public class App {
     
     func storeHandler(meal: Meal, completion: @escaping (Meal?, RequestError?) -> Void) {
         meal.save(completion)
+        
+        let path = rootPath + "/" + meal.name + ".jpg"
+        fileManager.createFile(atPath: path, contents: meal.photo)
     }
     
     func loadHandler(completion: @escaping ([Meal]?, RequestError?) -> Void) {

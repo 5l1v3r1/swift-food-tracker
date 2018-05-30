@@ -7,3 +7,5 @@
 ./config/localdev-config.json
 FoodServer.xcodeproj/
 Package.resolved
+Public/*
+!Public/.gitkeep
