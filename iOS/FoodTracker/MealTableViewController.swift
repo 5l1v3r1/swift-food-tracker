@@ -171,18 +171,12 @@ class MealTableViewController: UITableViewController {
         for meal in meals {
             saveToServer(meal: meal)
         }
-        
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(meals, toFile: Meal.ArchiveURL.path)
-        
-        if isSuccessfulSave {
-            os_log("Meals successfully saved.", log: OSLog.default, type: .debug)
-        } else {
-            os_log("")
-        }
+        loadFromServer()
     }
     
     private func loadMeals() -> [Meal]? {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: Meal.ArchiveURL.path) as? [Meal]
+        loadFromServer()
+        return meals
     }
     
     private func saveToServer(meal: Meal) {
@@ -205,6 +199,41 @@ class MealTableViewController: UITableViewController {
                 return
             }
             print("Saving meal to Kitura succeeded")
+        }
+    }
+    
+    private func loadFromServer() {
+        guard let client = KituraKit(baseURL: "http://localhost:8080") else {
+            print("Error creating KituraKit client")
+            return
+        }
+        
+        struct MealData: Codable {
+            var name: String
+            var photo: Data
+            var rating: Int
+        }
+        
+        client.get("/meals") { (mealData: [MealData]?, error: Error?) in
+            guard error == nil else {
+                print("Error saving meal to Kitura: \(error!)")
+                return
+            }
+            guard let mealData = mealData else {
+                self.meals = [Meal]()
+                return
+            }
+            
+            var meals = [Meal]()
+            
+            for data in mealData {
+                meals.append(Meal(name: data.name, photo: UIImage(data: data.photo), rating: data.rating)!)
+            }
+            
+            self.meals = meals
+            DispatchQueue.main.async { [unowned self] in
+                self.tableView.reloadData()
+            }
         }
     }
 }
