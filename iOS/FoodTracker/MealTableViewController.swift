@@ -8,6 +8,7 @@
 
 import UIKit
 import os.log
+import KituraKit
 
 class MealTableViewController: UITableViewController {
     
@@ -167,6 +168,10 @@ class MealTableViewController: UITableViewController {
     }
     
     private func saveMeals() {
+        for meal in meals {
+            saveToServer(meal: meal)
+        }
+        
         let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(meals, toFile: Meal.ArchiveURL.path)
         
         if isSuccessfulSave {
@@ -178,5 +183,28 @@ class MealTableViewController: UITableViewController {
     
     private func loadMeals() -> [Meal]? {
         return NSKeyedUnarchiver.unarchiveObject(withFile: Meal.ArchiveURL.path) as? [Meal]
+    }
+    
+    private func saveToServer(meal: Meal) {
+        guard let client = KituraKit(baseURL: "http://localhost:8080") else {
+            print("Error creating KituraKit client")
+            return
+        }
+        
+        struct MealData: Codable {
+            var name: String
+            var photo: Data
+            var rating: Int
+        }
+        
+        let mealData = MealData(name: meal.name, photo: UIImageJPEGRepresentation(meal.photo!, 1)!, rating: meal.rating )
+        
+        client.post("/meals", data: mealData) { (meal: MealData?, error: Error?) in
+            guard error == nil else {
+                print("Error saving meal to Kitura: \(error!)")
+                return
+            }
+            print("Saving meal to Kitura succeeded")
+        }
     }
 }
